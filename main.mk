@@ -23,7 +23,7 @@ endif
 
 clean-default: fmt
 	@rm -rf "$(BUILD)" go.sum
-	@go mod tidy
+	@[[ ! -f go.mod ]] || go mod tidy
 
 clena-default: clean
 
@@ -80,14 +80,14 @@ updatedeps-default: havego
 	    go get -u -v $$dep; \
 	done
 	@rm -f go.sum
-	@go mod tidy
+	@[[ ! -f go.mod ]] || go mod tidy
 
 updatereportcard-default: havego
 	@go get -u github.com/fzipp/gocyclo
 	@go get -u github.com/gordonklaus/ineffassign
 	@go get -u golang.org/x/lint/golint
 	@rm -f go.sum
-	@go mod tidy
+	@[[ ! -f go.mod ]] || go mod tidy
 
 vet-default: havego
 	@go vet $(SRC) || echo -n

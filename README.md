@@ -30,6 +30,11 @@ following contents:
 build: reportcard dir
     @go build -o "$(OUT)" ./cmd/justonething
 
+# Override the default debug recipe with an empty recipe (@true is
+# required)
+debug: reportcard dir
+    @true
+
 # Add new recipes specific to your project
 superclean: clean
 	@echo "Clean up extra stuff"
