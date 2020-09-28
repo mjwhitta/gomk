@@ -72,7 +72,7 @@ sloc-default: havego
 test-default: havego
 	@go clean --testcache
 	@for i in $(TEST); do \
-	    go test $(PKG)/$${i##./}; \
+	    go test -v $(PKG)/$${i##./}; \
 	done
 
 updatedeps-default: havego
