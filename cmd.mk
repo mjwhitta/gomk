@@ -1,12 +1,13 @@
 build-default: reportcard dir
-	@go build -ldflags "$(LDFLAGS)" -o "$(OUT)" ./cmd/*
+	@go build --ldflags "$(LDFLAGS)" -o "$(OUT)" --trimpath ./cmd/*
 
 debug-default: reportcard dir
-	@go build -gcflags all="-l -N" -o "$(OUT)" ./cmd/*
+	@go build --gcflags all="-l -N" -o "$(OUT)" --trimpath ./cmd/*
 
 install-default: reportcard
 	@mkdir -p "$(HOME)/.local/bin"
-	@go build -ldflags "$(LDFLAGS)" -o "$(HOME)/.local/bin" ./cmd/*
+	@go build --ldflags "$(LDFLAGS)" -o "$(HOME)/.local/bin" \
+	    --trimpath ./cmd/*
 
 shrink-default: build
 	@which upx >/dev/null 2>&1
