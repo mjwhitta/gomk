@@ -69,6 +69,9 @@ sloc-default: havego
 	    go get -u github.com/bytbox/sloc/sloc
 	@sloc .
 
+strip-default: build
+	@find build -type f -exec ./gomk/tools/strip {} +
+
 test-default: havego
 	@go clean --testcache
 	@for i in $(TEST); do \
