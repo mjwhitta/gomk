@@ -29,7 +29,7 @@ clena-default: clean
 
 cyclo-default: havego
 	@which gocyclo >/dev/null 2>&1 || \
-	    go get -u github.com/fzipp/gocyclo
+	    go get -u github.com/fzipp/gocyclo/cmd/gocyclo
 	@gocyclo -over 15 . || echo -n
 
 dir-default:
@@ -86,7 +86,7 @@ updatedeps-default: havego
 	@[[ ! -f go.mod ]] || go mod tidy
 
 updatereportcard-default: havego
-	@go get -u github.com/fzipp/gocyclo
+	@go get -u github.com/fzipp/gocyclo/cmd/gocyclo
 	@go get -u github.com/gordonklaus/ineffassign
 	@go get -u golang.org/x/lint/golint
 	@rm -f go.sum
