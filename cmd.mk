@@ -11,7 +11,7 @@ install-default: reportcard
 
 shrink-default: build
 	@which upx >/dev/null 2>&1
-	@find build -type f -exec upx {} +
+	@find build -type f -exec upx {} \;
 
 uninstall-default:
 	@for cmd in $(shell ls cmd); do \

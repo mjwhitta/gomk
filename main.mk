@@ -5,9 +5,9 @@ GREP := grep --exclude-dir=".git" -hIioPrs
 LDFLAGS := -s -w
 OUT := $(BUILD)/$(GOOS)/$(GOARCH)
 PKG := $(shell $(GREP) "module\s+\K.+" go.mod)
-SRC := $(shell find . -name "*.go" -exec dirname {} + | sort -u)
+SRC := $(shell find . -name "*.go" -exec dirname {} \; | sort -u)
 SRCDEPS := $(shell go list -deps $(SRC) | grep -iPs "^git")
-TEST := $(shell find . -name "*_test.go" -exec dirname {} + | sort -u)
+TST := $(shell find . -name "*_test.go" -exec dirname {} \; | sort -u)
 VERS := $(shell $(GREP) "const\s+Version\s+\=\s+\"\K[^\"]+" .)
 
 all: build
@@ -70,11 +70,11 @@ sloc-default: havego
 	@sloc .
 
 strip-default: build
-	@find build -type f -exec ./gomk/tools/strip {} +
+	@find build -type f -exec ./gomk/tools/strip {} \;
 
 test-default: havego
 	@go clean --testcache
-	@for i in $(TEST); do \
+	@for i in $(TST); do \
 	    go test -v $(PKG)/$${i##./}; \
 	done
 
