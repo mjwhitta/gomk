@@ -35,43 +35,52 @@ usage() {
     cat <<EOF
 Usage: ${0##*/} [OPTIONS] <bin1>... [binN]
 
-Strip metadata from binary.
+DESCRIPTION
+    Strip metadata from binary.
 
-Options:
-    -h, --help    Display this help message
-    --no-color    Disable colorized output
+OPTIONS
+    -h, --help        Display this help message
+        --no-color    Disable colorized output
 
 EOF
     exit "$1"
 }
 
-declare -a args deps
+declare -a args
 unset help
 color="true"
+
+# Parse command line options
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        "--") shift; args+=("$@"); break ;;
+        "-h"|"--help") help="true" ;;
+        "--no-color") unset color ;;
+        *) args+=("$1") ;;
+    esac
+    case "$?" in
+        0) ;;
+        1) shift ;;
+        *) usage $? ;;
+    esac
+    shift
+done
+[[ ${#args[@]} -eq 0 ]] || set -- "${args[@]}"
+
+# Help info
+[[ -z $help ]] || usage 0
+
+# Check for missing dependencies
+declare -a deps
 deps+=("awk")
 deps+=("grep")
 deps+=("sed")
 deps+=("sort")
 deps+=("strings")
 deps+=("tr")
-
-# Check for missing dependencies
 check_deps
 
-# Parse command line options
-while [[ $# -gt 0 ]]; do
-    case "$1" in
-        "--") shift && args+=("$@") && break ;;
-        "-h"|"--help") help="true" ;;
-        "--no-color") unset color ;;
-        *) args+=("$1") ;;
-    esac
-    shift
-done
-[[ ${#args[@]} -eq 0 ]] || set -- "${args[@]}"
-
 # Check for valid params
-[[ -z $help ]] || usage 0
 [[ $# -gt 0 ]] || usage 1
 
 for bin in "$@"; do
