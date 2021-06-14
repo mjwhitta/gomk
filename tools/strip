@@ -98,6 +98,7 @@ for bin in "$@"; do
         awk '{print length(),$0 | "sort -nr"}'
     ); unset line
 
+    sed -i "s/\*/\\\\*/g" "$script"
     sed -f "$script" -i "$bin"
     rm -f "$script"
 done; unset bin
