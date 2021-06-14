@@ -74,21 +74,30 @@ done
 declare -a deps
 deps+=("awk")
 deps+=("grep")
+deps+=("head")
 deps+=("sed")
 deps+=("sort")
 deps+=("strings")
 deps+=("tr")
+deps+=("xxd")
 check_deps
 
 # Check for valid params
 [[ $# -gt 0 ]] || usage 1
 
+script="/tmp/strip_$(head -c 8 /dev/random | xxd -p)"
+
 for bin in "$@"; do
+    # Build sed script
+    echo -n >"$script"
     while read -r line; do
         new="$(echo "${line#* }" | tr "[:print:]" " ")"
-        sed -i "s#${line#* }#$new#gi" "$bin"
+        echo "s#${line#* }#$new#gi" >>"$script"
     done < <(
         strings "$bin" | sort -u | grep -ioPs "git(hub|lab)\S+" | \
         awk '{print length(),$0 | "sort -nr"}'
     ); unset line
+
+    sed -f "$script" -i "$bin"
+    rm -f "$script"
 done; unset bin
