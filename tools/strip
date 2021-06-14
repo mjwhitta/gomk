@@ -88,7 +88,7 @@ for bin in "$@"; do
         new="$(echo "${line#* }" | tr "[:print:]" " ")"
         sed -i "s#${line#* }#$new#gi" "$bin"
     done < <(
-        strings "$bin" | sort -u | grep -iPs "git(hub|lab)\S+" | \
+        strings "$bin" | sort -u | grep -ioPs "git(hub|lab)\S+" | \
         awk '{print length(),$0 | "sort -nr"}'
     ); unset line
 done; unset bin
