@@ -29,8 +29,8 @@ clena-default: clean
 
 cyclo-default: havego
 	@which gocyclo >/dev/null 2>&1 || \
-	    go get --ldflags="-s -w" --trimpath -u \
-	    github.com/fzipp/gocyclo/cmd/gocyclo
+	    go install --ldflags="-s -w" --trimpath \
+	    github.com/fzipp/gocyclo/cmd/gocyclo@latest
 	@gocyclo -over 15 . || echo -n
 
 dir-default:
@@ -47,14 +47,14 @@ havego-default:
 
 ineffassign-default: havego
 	@which ineffassign >/dev/null 2>&1 || \
-	    go get --ldflags="-s -w" --trimpath -u \
-	    github.com/gordonklaus/ineffassign
+	    go install --ldflags="-s -w" --trimpath \
+	    github.com/gordonklaus/ineffassign@latest
 	@ineffassign . || echo -n
 
 lint-default: havego
 	@which golint >/dev/null 2>&1 || \
-	    go get --ldflags="-s -w" --trimpath -u \
-	    golang.org/x/lint/golint
+	    go install --ldflags="-s -w" --trimpath \
+	    golang.org/x/lint/golint@latest
 	@golint $(SRC)
 
 push-default:
@@ -69,8 +69,8 @@ simplify-default: havego
 
 sloc-default: havego
 	@which sloc >/dev/null 2>&1 || \
-	    go get --ldflags="-s -w" --trimpath -u \
-	    github.com/bytbox/sloc/sloc
+	    go install --ldflags="-s -w" --trimpath \
+	    github.com/bytbox/sloc/sloc@latest
 	@sloc .
 
 strip-default:
@@ -90,12 +90,12 @@ updatedeps-default: havego
 	@[[ ! -f go.mod ]] || go mod tidy
 
 updatereportcard-default: havego
-	@go get --ldflags="-s -w" --trimpath -u \
-	    github.com/fzipp/gocyclo/cmd/gocyclo
-	@go get --ldflags="-s -w" --trimpath -u \
-	    github.com/gordonklaus/ineffassign
-	@go get --ldflags="-s -w" --trimpath -u \
-	    golang.org/x/lint/golint
+	@go install --ldflags="-s -w" --trimpath \
+	    github.com/fzipp/gocyclo/cmd/gocyclo@latest
+	@go install --ldflags="-s -w" --trimpath \
+	    github.com/gordonklaus/ineffassign@latest
+	@go install --ldflags="-s -w" --trimpath \
+	    golang.org/x/lint/golint@latest
 	@rm -f go.sum
 	@[[ ! -f go.mod ]] || go mod tidy
 
