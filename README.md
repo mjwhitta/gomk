@@ -5,39 +5,52 @@
 A "simple" `Makefile` solution for Go projects. It attempts to
 automate a lot of tasks for you. There are targets such as
 `reportcard` which will "grade" your code and provide warnings where
-necessary. The default target is `build` and it will compile
-`./cmd/*`. However, it can be redefined in your top-level `Makefile`
-if needed. See below for an example.
+necessary. The default target is `build` and it will compile each
+subdirectory in `./cmd`. However, it can be redefined in your
+top-level `Makefile`, if needed. See below for an example.
 
 ## How to install
 
-Open a terminal, navigate to your Go repo, and run the following:
+Open a terminal, navigate to your git repo, and run the following:
 
 ```
 $ git submodule add https://gitlab.com/mjwhitta/gomk.git
+$ cp gomk/Makefile.template Makefile
+$ make init
+```
+
+Alternatively, if not a git repo, you can use `curl`:
+
+```
+$ curl -Lo gomk.tgz -s \
+    "https://gitlab.com/mjwhitta/gomk/-/archive/master/gomk-master.tar.gz"
+$ tar -f gomk.tgz -xz
+$ mv gomk-master gomk
+$ cp gomk/Makefile.template Makefile
+$ make init
 ```
 
 ## Usage
 
-After adding gomk as a submodule, you can create a `Makefile` with the
-following contents:
+After adding gomk as a submodule, and copying the template `Makefile`,
+you can modify as needed. The targets defined by gomk end with
+`-default` and can be redefined by creating your own without the
+`-default`. You can also add your own targets specific to your
+project. Below are some examples:
 
 ```
-# Include gomk if it's been checked-out: git submodule update --init
--include gomk/main.mk
-
-# Override the default build recipe
+# Override the build-default recipe
 build: reportcard dir
     @go build -o "$(OUT)" ./cmd/justonething
 
-# Override the default debug recipe with an empty recipe (@true is
+# Override the debug-default recipe with an empty recipe (@true is
 # required)
 debug: reportcard dir
     @true
 
 # Add new recipes specific to your project
 superclean: clean
-	@echo "Clean up extra stuff"
+	@echo "Clean up all the stuff!"
 ```
 
 ## Links

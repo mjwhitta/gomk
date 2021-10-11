@@ -31,7 +31,7 @@ cyclo-default: havego
 	@which gocyclo >/dev/null 2>&1 || \
 	    go install --ldflags="-s -w" --trimpath \
 	    github.com/fzipp/gocyclo/cmd/gocyclo@latest
-	@gocyclo -over 15 . || echo -n
+	@gocyclo -over 15 $(SRC) || echo -n
 
 dir-default:
 	@mkdir -p "$(OUT)"
@@ -49,7 +49,10 @@ ineffassign-default: havego
 	@which ineffassign >/dev/null 2>&1 || \
 	    go install --ldflags="-s -w" --trimpath \
 	    github.com/gordonklaus/ineffassign@latest
-	@ineffassign . || echo -n
+	@ineffassign $(SRC) || echo -n
+
+init-default: havego
+	@read -p "Enter module name: " m && go mod init "$$m"
 
 lint-default: havego
 	@which golint >/dev/null 2>&1 || \
