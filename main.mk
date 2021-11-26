@@ -4,9 +4,9 @@ GOOS := $(shell go env GOOS)
 GREP := grep --exclude-dir=".git" -hIioPrs
 LDFLAGS := -s -w
 OUT := $(BUILD)/$(GOOS)/$(GOARCH)
-PKG := $(shell $(GREP) "module\s+\K.+" go.mod)
+PKG := $(shell go list -m)
 SRC := $(shell find . -name "*.go" -exec dirname {} \; | sort -u)
-SRCDEPS := $(shell go list -deps $(SRC) | grep -iPs "^(git|golang)")
+SRCDEPS := $(shell go list -m -u all | cut -d " " -f 1)
 TST := $(shell find . -name "*_test.go" -exec dirname {} \; | sort -u)
 VERS := $(shell $(GREP) "const\s+Version\s+\=\s+\"\K[^\"]+" .)
 
