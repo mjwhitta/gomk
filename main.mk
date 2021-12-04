@@ -18,7 +18,7 @@ OUT := $(BUILD)/$(GOOS)/$(GOARCH)
 PKG := $(shell go list -m)
 SRC := $(call uniq,$(dir $(call find,.,*.go)))
 SRCDEPS := $(patsubst v%,,$(shell go list -m all))
-TST := $(call uniq,$(subst ./,,$(dir $(call find,.,*_test.go))))
+TST := $(call uniq,$(dir $(call find,.,*_test.go)))
 ifeq ($(unameS),Windows)
     VERS := $(subst ",,$(lastword $(shell findstr /R "const +Version" *.go)))
 else
@@ -111,7 +111,9 @@ endif
 
 test-default:
 	@go clean --testcache
-	$(foreach t,$(TST),$(shell go test -v "$(PKG)/$t"))
+ifneq ($(TST),)
+	@go test -v $(TST)
+endif
 
 updatedeps-default:
 	$(foreach d,$(SRCDEPS),$(shell go get --ldflags="$(LDFLAGS)" --trimpath -u -v $d))
