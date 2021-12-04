@@ -1,4 +1,4 @@
-SO := $(shell grep -hioPs "^package\s+\K\S+" *.go | sort -u)
+SO := $(notdir $(PKG))
 
 build-default: reportcard dir
 	@go build --ldflags "$(LDFLAGS)" -o "$(OUT)/$(SO).a" --trimpath

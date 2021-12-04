@@ -16,7 +16,6 @@ Open a terminal, navigate to your git repo, and run the following:
 ```
 $ git submodule add https://gitlab.com/mjwhitta/gomk.git
 $ cp gomk/Makefile.template Makefile
-$ make init
 ```
 
 Alternatively, if not a git repo, you can use `curl`:
@@ -27,7 +26,6 @@ $ curl -Lo gomk.tgz -s \
 $ tar -f gomk.tgz -xz
 $ mv gomk-master gomk
 $ cp gomk/Makefile.template Makefile
-$ make init
 ```
 
 ## Usage
@@ -43,14 +41,12 @@ project. Below are some examples:
 build: reportcard dir
     @go build -o "$(OUT)" ./cmd/justonething
 
-# Override the debug-default recipe with an empty recipe (@true is
-# required)
-debug: reportcard dir
-    @true
+# Override the debug-default recipe with an empty recipe
+debug: reportcard dir;
 
 # Add new recipes specific to your project
 superclean: clean
-	@echo "Clean up all the stuff!"
+	@echo Clean up all the stuff
 ```
 
 ## Links

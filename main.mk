@@ -1,63 +1,94 @@
+# Determine OS
+ifeq ($(OS),Windows_NT)
+	unameS := Windows
+else
+	unameS := $(shell uname -s)
+endif
+
+# Utility functions
+find=$(foreach d,$(wildcard $(1:=/*)),$(call find,$d,$2) $(filter $(subst *,%,$2),$d))
+uniq=$(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
+
+# Set some variables
 BUILD := build
 GOARCH := $(shell go env GOARCH)
 GOOS := $(shell go env GOOS)
-GREP := grep --exclude-dir=".git" -hIioPrs
 LDFLAGS := -s -w
 OUT := $(BUILD)/$(GOOS)/$(GOARCH)
 PKG := $(shell go list -m)
-SRC := $(shell find . -name "*.go" -exec dirname {} \; | sort -u)
-SRCDEPS := $(shell go list -m -u all | cut -d " " -f 1)
-TST := $(shell find . -name "*_test.go" -exec dirname {} \; | sort -u)
-VERS := $(shell $(GREP) "const\s+Version\s+\=\s+\"\K[^\"]+" .)
+SRC := $(call uniq,$(dir $(call find,.,*.go)))
+SRCDEPS := $(patsubst v%,,$(shell go list -m all))
+TST := $(call uniq,$(dir $(call find,.,*_test.go)))
+ifeq ($(unameS),Windows)
+    VERS := $(subst ",,$(lastword $(shell findstr /R "const +Version" *.go)))
+else
+    VERS := $(subst ",,$(lastword $(shell grep -Es "const +Version" *.go)))
+endif
 
 all: build
 
-%: %-default
-	@true
+%: %-default;
 
-ifeq ($(shell ls -d cmd 2>/dev/null), cmd)
-    include gomk/cmd.mk
-else
+ifeq ($(wildcard cmd/*),)
     include gomk/so.mk
+else
+    include gomk/cmd.mk
 endif
 
 clean-default: fmt
-	@rm -rf "$(BUILD)" go.sum
-	@[[ ! -f go.mod ]] || go mod tidy
+ifeq ($(unameS),Windows)
+ifneq ($(wildcard $(BUILD)),)
+	@powershell -c Remove-Item -Force -Recurse "$(BUILD)"
+endif
+else
+	@rm -fr "$(BUILD)"
+endif
+ifneq ($(wildcard go.mod),)
+	@go mod tidy
+endif
 
 clena-default: clean
 
-cyclo-default: havego
-	@which gocyclo >/dev/null 2>&1 || \
-	    go install --ldflags="-s -w" --trimpath \
-	    github.com/fzipp/gocyclo/cmd/gocyclo@latest
-	@gocyclo -over 15 $(SRC) || echo -n
+cyclo-default:
+	@gocyclo -over 15 $(SRC)
 
 dir-default:
+ifeq ($(unameS),Windows)
+ifeq ($(wildcard $(OUT)),)
+	@powershell -c "New-Item -ItemType Directory \"$(OUT)\" | Out-Null"
+endif
+else
 	@mkdir -p "$(OUT)"
+endif
 
-fmt-default: havego
-	@go fmt $(SRC) >/dev/null
+fmt-default:
+	@go fmt $(SRC)
 
-gen-default: havego
+gen-default:
+ifneq ($(unameS),Windows)
 	@go generate $(SRC)
+endif
 
-havego-default:
-	@which go >/dev/null 2>&1
+ineffassign-default:
+	@ineffassign $(SRC)
 
-ineffassign-default: havego
-	@which ineffassign >/dev/null 2>&1 || \
-	    go install --ldflags="-s -w" --trimpath \
+installreportcard-default:
+	@go install --ldflags="$(LDFLAGS)" --trimpath \
+	    github.com/fzipp/gocyclo/cmd/gocyclo@latest
+	@go install --ldflags="$(LDFLAGS)" --trimpath \
 	    github.com/gordonklaus/ineffassign@latest
-	@ineffassign $(SRC) || echo -n
-
-init-default: havego
-	@read -p "Enter module name: " m && go mod init "$$m"
-
-lint-default: havego
-	@which golint >/dev/null 2>&1 || \
-	    go install --ldflags="-s -w" --trimpath \
+	@go install --ldflags="$(LDFLAGS)" --trimpath \
 	    golang.org/x/lint/golint@latest
+ifneq ($(wildcard go.mod),)
+	@go mod tidy
+endif
+
+license-default:
+ifeq ($(wildcard LICENSE.txt),)
+	@echo Missing license
+endif
+
+lint-default:
 	@golint $(SRC)
 
 push-default:
@@ -65,45 +96,31 @@ push-default:
 	@git push
 	@git push --tags
 
-reportcard-default: fmt cyclo ineffassign lint simplify vet
+reportcard-default: fmt cyclo ineffassign license lint simplify vet
 
-simplify-default: havego
-	@gofmt -s -w $(SRC)
+simplify-default:
+	@gofmt $(LDFLAGS) $(SRC)
 
-sloc-default: havego
-	@which sloc >/dev/null 2>&1 || \
-	    go install --ldflags="-s -w" --trimpath \
-	    github.com/bytbox/sloc/sloc@latest
+sloc-default:
 	@sloc .
 
 strip-default:
+ifneq ($(unameS),Windows)
 	@find "$(OUT)" -type f -exec ./gomk/tools/strip {} \;
+endif
 
-test-default: havego
+test-default:
 	@go clean --testcache
-	@for i in $(TST); do \
-	    go test -v $(PKG)/$${i##./}; \
-	done
+	$(foreach t,$(TST),$(shell go test -v "$(PKG)/${t##./}"))
 
-updatedeps-default: havego
-	@for dep in $(SRCDEPS); do \
-	    go get --ldflags="-s -w" --trimpath -u -v $$dep; \
-	done
-	@rm -f go.sum
-	@[[ ! -f go.mod ]] || go mod tidy
+updatedeps-default:
+	$(foreach d,$(SRCDEPS),$(shell go get --ldflags="$(LDFLAGS)" --trimpath -u -v $d))
+ifneq ($(wildcard go.mod),)
+	@go mod tidy
+endif
 
-updatereportcard-default: havego
-	@go install --ldflags="-s -w" --trimpath \
-	    github.com/fzipp/gocyclo/cmd/gocyclo@latest
-	@go install --ldflags="-s -w" --trimpath \
-	    github.com/gordonklaus/ineffassign@latest
-	@go install --ldflags="-s -w" --trimpath \
-	    golang.org/x/lint/golint@latest
-	@rm -f go.sum
-	@[[ ! -f go.mod ]] || go mod tidy
-
-vet-default: havego
-	@go vet $(SRC) || echo -n
+vet-default:
+	@go vet $(SRC)
 
 yank-default:
 	@git tag -d "v$(VERS)"
