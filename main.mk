@@ -25,7 +25,7 @@ else
     VERS := $(subst ",,$(lastword $(shell grep -Es "const +Version" *.go)))
 endif
 
-all: build
+all: build;
 
 %: %-default;
 
@@ -99,7 +99,7 @@ push-default:
 	@git push
 	@git push --tags
 
-reportcard-default: fmt cyclo ineffassign license lint simplify vet
+reportcard-default: fmt cyclo ineffassign license lint simplify vet;
 
 simplify-default:
 	@gofmt $(LDFLAGS) $(SRC)
@@ -114,7 +114,7 @@ else
 	@find "$(OUT)" -type f -exec ./gomk/tools/strip {} \;
 endif
 
-superclean-default: clean
+superclean-default: clean;
 
 test-default:
 ifneq ($(TST),)
