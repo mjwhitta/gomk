@@ -47,8 +47,6 @@ ifneq ($(wildcard go.mod),)
 	@go mod tidy
 endif
 
-clena-default: clean
-
 cyclo-default:
 	@gocyclo -over 15 $(SRC)
 
@@ -65,9 +63,7 @@ fmt-default:
 	@go fmt $(SRC)
 
 gen-default:
-ifneq ($(unameS),Windows)
 	@go generate $(SRC)
-endif
 
 ineffassign-default:
 	@ineffassign $(SRC)
@@ -112,13 +108,17 @@ sloc-default:
 	@sloc .
 
 strip-default:
-ifneq ($(unameS),Windows)
+ifeq ($(unameS),Windows)
+	@echo Unsupported OS
+else
 	@find "$(OUT)" -type f -exec ./gomk/tools/strip {} \;
 endif
 
+superclean-default: clean
+
 test-default:
-	@go clean --testcache
 ifneq ($(TST),)
+	@go clean --testcache
 	@go test -v $(TST)
 endif
 

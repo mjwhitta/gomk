@@ -1,7 +1,7 @@
 SO := $(notdir $(PKG))
 
-build-default: reportcard dir
+build-default: dir
 	@go build --ldflags "$(LDFLAGS)" -o "$(OUT)/$(SO).a" --trimpath
 
-debug-default: reportcard dir
+debug-default: dir
 	@go build --gcflags all="-l -N" -o "$(OUT)/$(SO).a" --trimpath
