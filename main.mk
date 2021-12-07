@@ -16,9 +16,7 @@ GOOS := $(shell go env GOOS)
 LDFLAGS := -s -w
 OUT := $(BUILD)/$(GOOS)/$(GOARCH)
 PKG := $(shell go list -m)
-SRC := $(call uniq,$(dir $(call find,.,*.go)))
 SRCDEPS := $(patsubst v%,,$(shell go list -m all))
-TST := $(call uniq,$(dir $(call find,.,*_test.go)))
 ifeq ($(unameS),Windows)
     VERS := $(subst ",,$(lastword $(shell findstr /R "const +Version" *.go)))
 else
@@ -34,6 +32,9 @@ ifeq ($(wildcard cmd/*),)
 else
     include gomk/cmd.mk
 endif
+include gomk/reportcard.mk
+include gomk/sloc.mk
+include gomk/vscode.mk
 
 clean-default: fmt
 ifeq ($(unameS),Windows)
@@ -47,9 +48,6 @@ ifneq ($(wildcard go.mod),)
 	@go mod tidy
 endif
 
-cyclo-default:
-	@gocyclo -over 15 $(SRC)
-
 dir-default:
 ifeq ($(unameS),Windows)
 ifeq ($(wildcard $(OUT)),)
@@ -60,76 +58,27 @@ else
 endif
 
 fmt-default:
-	@go fmt $(SRC)
+	@go fmt ./...
 
 gen-default:
-	@go generate $(SRC)
-
-ineffassign-default:
-	@ineffassign $(SRC)
-
-installreportcard-default:
-	@go install --ldflags="$(LDFLAGS)" --trimpath \
-	    github.com/fzipp/gocyclo/cmd/gocyclo@latest
-	@go install --ldflags="$(LDFLAGS)" --trimpath \
-	    github.com/gordonklaus/ineffassign@latest
-	@go install --ldflags="$(LDFLAGS)" --trimpath \
-	    golang.org/x/lint/golint@latest
-ifneq ($(wildcard go.mod),)
-	@go mod tidy
-endif
-
-installsloc-default:
-	@go install --ldflags="$(LDFLAGS)" --trimpath \
-	    github.com/bytbox/sloc/sloc@latest
-ifneq ($(wildcard go.mod),)
-	@go mod tidy
-endif
-
-license-default:
-ifeq ($(wildcard LICENSE.txt),)
-	@echo Missing license
-endif
-
-lint-default:
-	@golint $(SRC)
+	@go generate ./...
 
 push-default:
 	@git tag "v$(VERS)"
 	@git push
 	@git push --tags
 
-reportcard-default: fmt cyclo ineffassign license lint simplify vet;
-
-simplify-default:
-	@gofmt $(LDFLAGS) $(SRC)
-
-sloc-default:
-	@sloc .
-
-strip-default:
-ifeq ($(unameS),Windows)
-	@echo Unsupported OS
-else
-	@find "$(OUT)" -type f -exec ./gomk/tools/strip {} \;
-endif
-
 superclean-default: clean;
 
 test-default:
-ifneq ($(TST),)
 	@go clean --testcache
-	@go test -v $(TST)
-endif
+	@go test ./...
 
 updatedeps-default:
 	$(foreach d,$(SRCDEPS),$(shell go get --ldflags="$(LDFLAGS)" --trimpath -u -v $d))
 ifneq ($(wildcard go.mod),)
 	@go mod tidy
 endif
-
-vet-default:
-	@go vet $(SRC)
 
 yank-default:
 	@git tag -d "v$(VERS)"
