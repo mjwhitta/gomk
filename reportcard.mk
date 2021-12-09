@@ -19,14 +19,19 @@ endif
 
 license-default:
 ifeq ($(wildcard LICENSE.txt),)
-	@echo Missing license
+	@echo Missing LICENSE.txt
 endif
 
 lint-default:
 	@golint ./...
 
+readme-default:
+ifeq ($(wildcard README.md),)
+	@echo Missing README.md
+endif
+
 # Run the same tools as goreportcard.com
-reportcard-default: fmt cyclo ineffassign license lint simplify vet;
+reportcard-default: fmt cyclo ineffassign license lint readme simplify vet;
 
 simplify-default:
 	@gofmt $(LDFLAGS) $(SRC)
