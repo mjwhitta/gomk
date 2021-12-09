@@ -13,6 +13,7 @@ uniq=$(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
 BUILD := build
 GOARCH := $(shell go env GOARCH)
 GOOS := $(shell go env GOOS)
+GOPATH := $(firstword $(subst :, ,$(shell go env GOPATH)))
 LDFLAGS := -s -w
 OUT := $(BUILD)/$(GOOS)/$(GOARCH)
 PKG := $(shell go list -m)
