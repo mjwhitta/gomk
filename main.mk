@@ -71,7 +71,7 @@ push-default:
 
 superclean-default: clean;
 
-test-default:
+test-default: fmt
 	@go clean --testcache
 	@go test ./...
 
