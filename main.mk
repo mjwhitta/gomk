@@ -11,6 +11,7 @@ uniq=$(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
 
 # Set some variables
 BUILD := build
+CC := go
 GOARCH := $(shell go env GOARCH)
 GOOS := $(shell go env GOOS)
 GOPATH := $(firstword $(subst :, ,$(shell go env GOPATH)))
@@ -18,10 +19,16 @@ LDFLAGS := -s -w
 OUT := $(BUILD)/$(GOOS)/$(GOARCH)
 PKG := $(shell go list -m)
 SRCDEPS := $(patsubst v%,,$(shell go list -m all))
+TRIM := --trimpath
 ifeq ($(unameS),Windows)
     VERS := $(subst ",,$(lastword $(shell findstr /R "const +Version" *.go)))
 else
     VERS := $(subst ",,$(lastword $(shell grep -Es "const +Version" *.go)))
+endif
+
+ifneq ($(GARBLE),)
+	CC := garble
+	TRIM :=
 endif
 
 all: build;

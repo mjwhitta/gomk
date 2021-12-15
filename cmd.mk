@@ -1,5 +1,5 @@
 build-default: dir fmt
-	$(foreach c,$(wildcard ./cmd/*),@go build --ldflags "$(LDFLAGS)" -o "$(OUT)" --trimpath $c)
+	$(foreach c,$(wildcard ./cmd/*),@$(CC) build --ldflags "$(LDFLAGS)" -o "$(OUT)" $(TRIM) $c)
 
 debug-default: dir fmt
-	$(foreach c,$(wildcard ./cmd/*),@go build --gcflags all="-l -N" -o "$(OUT)" --trimpath $c)
+	$(foreach c,$(wildcard ./cmd/*),@$(CC) build --gcflags all="-l -N" -o "$(OUT)" $(TRIM) $c)
