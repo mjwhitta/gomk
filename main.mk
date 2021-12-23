@@ -50,12 +50,20 @@ ifeq ($(unameS),Windows)
 ifneq ($(wildcard $(BUILD)),)
 	@powershell -c Remove-Item -Force -Recurse "$(BUILD)"
 endif
+ifneq ($(wildcard cover.out),)
+	@powershell -c Remove-Item -Force cover.out 
+endif
 else
-	@rm -fr "$(BUILD)"
+	@rm -fr "$(BUILD)" cover.out
 endif
 ifneq ($(wildcard go.mod),)
 	@go mod tidy
 endif
+
+cover-default: fmt
+	@go clean --testcache
+	@go test --coverprofile=cover.out ./...
+	@go tool cover --func=cover.out
 
 dir-default:
 ifeq ($(unameS),Windows)
@@ -88,6 +96,9 @@ updatedeps-default:
 ifneq ($(wildcard go.mod),)
 	@go mod tidy
 endif
+
+visualcover-default: cover
+	@go tool cover --html=./cover.out
 
 yank-default:
 	@git tag -d "v$(VERS)"
