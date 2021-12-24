@@ -7,10 +7,8 @@ endif
 
 # Helper variables
 comma := ,
-$(comma) := $(comma) # Can now use $(,)
 null :=
 space := $(null) $(null)
-$(space) := $(space) # Can now use $( )
 
 # Utility functions
 find=$(foreach d,$(wildcard $(1:=/*)),$(call find,$d,$2) $(filter $(subst *,%,$2),$d))
