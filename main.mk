@@ -85,7 +85,7 @@ fmt-default:
 gen-default:
 	@go generate ./...
 
-gitlab-cover-default: fmt
+gitlab-cover-default: clean
 	@useradd -m user
 	@chown -R user:user .
 	@go clean --testcache
