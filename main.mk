@@ -56,7 +56,7 @@ ifneq ($(wildcard $(BUILD)),)
 	@powershell -c Remove-Item -Force -Recurse "$(BUILD)"
 endif
 ifneq ($(wildcard cover.out),)
-	@powershell -c Remove-Item -Force cover.out 
+	@powershell -c Remove-Item -Force cover.out
 endif
 else
 	@rm -fr "$(BUILD)" cover.out
