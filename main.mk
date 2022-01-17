@@ -85,6 +85,13 @@ fmt-default:
 gen-default:
 	@go generate ./...
 
+gitlab-cover-default: fmt
+	@useradd -m user
+	@chown -R user:user .
+	@go clean --testcache
+	@su -c "go test --coverprofile=cover.out ./..." user
+	@go tool cover --func=cover.out
+
 push-default:
 	@git tag "v$(VERS)"
 	@git push
