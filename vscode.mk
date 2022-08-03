@@ -18,4 +18,4 @@ staticcheck-default:
 	@staticcheck ./...
 
 # Run the same tools as VSCode
-vslint-default: fmt staticcheck
+vslint-default: fmt staticcheck;
