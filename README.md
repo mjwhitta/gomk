@@ -14,17 +14,17 @@ top-level `Makefile`, if needed. See below for an example.
 Open a terminal, navigate to your git repo, and run the following:
 
 ```
-$ git submodule add https://gitlab.com/mjwhitta/gomk.git
+$ git submodule add https://github.com/mjwhitta/gomk.git
 $ cp gomk/Makefile.template Makefile
 ```
 
 Alternatively, if not a git repo, you can use `curl`:
 
 ```
-$ curl -Lo gomk.tgz -s \
-    "https://gitlab.com/mjwhitta/gomk/-/archive/master/gomk-master.tar.gz"
-$ tar -f gomk.tgz -xz
-$ mv gomk-master gomk
+$ curl -Lo gomk.zip -s \
+    "https://github.com/mjwhitta/gomk/archive/refs/heads/main.zip"
+$ unzip gomk.zip
+$ mv gomk-main gomk
 $ cp gomk/Makefile.template Makefile
 ```
 
@@ -51,4 +51,4 @@ superclean: clean
 
 ## Links
 
-- [Source](https://gitlab.com/mjwhitta/gomk)
+- [Source](https://github.com/mjwhitta/gomk)
