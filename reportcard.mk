@@ -36,5 +36,10 @@ reportcard-default: fmt cyclo ineffassign license lint readme simplify vet;
 simplify-default:
 	@gofmt $(LDFLAGS) $(SRC)
 
+spellcheck-default:
+ifneq ($(unameS),Windows)
+	@codespell -S "*.pem"
+endif
+
 vet-default:
 	@go vet ./...

@@ -86,11 +86,13 @@ gen-default:
 	@go generate ./...
 
 gitlab-cover-default: clean
+ifneq ($(unameS),Windows)
 	@useradd -m user
 	@chown -R user:user .
 	@go clean --testcache
 	@su -c "go test --coverprofile=cover.out ./..." user
 	@go tool cover --func=cover.out
+endif
 
 push-default:
 	@git tag "v$(VERS)"
@@ -113,5 +115,5 @@ visualcover-default: cover
 	@go tool cover --html=./cover.out
 
 yank-default:
-	@git tag -d "v$(VERS)"
+	@git tag -d "v$(VERS)" || true
 	@git push -d origin "v$(VERS)"
