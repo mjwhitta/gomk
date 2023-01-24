@@ -65,6 +65,8 @@ ifneq ($(wildcard go.mod),)
 	@go mod tidy
 endif
 
+clena-default: clean;
+
 cover-default: fmt
 	@go clean --testcache
 	@go test --coverprofile=cover.out ./...
@@ -94,12 +96,22 @@ ifneq ($(unameS),Windows)
 	@go tool cover --func=cover.out
 endif
 
+mr-default: fmt
+	@make GOOS=darwin reportcard spellcheck vslint
+	@make GOOS=linux reportcard spellcheck vslint
+	@make GOOS=windows reportcard spellcheck vslint
+	@make test
+
+pr-default: mr;
+
 push-default:
 	@git tag "v$(VERS)"
 	@git push
 	@git push --tags
 
 superclean-default: clean;
+
+superclena-default: superclean;
 
 test-default: fmt
 	@go clean --testcache

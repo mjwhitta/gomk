@@ -38,7 +38,7 @@ simplify-default:
 
 ifneq ($(unameS),Windows)
 spellcheck-default:
-	@codespell --check-filenames --skip  ".git,*.pem"
+	@codespell --check-filenames --skip ".git,*.pem"
 endif
 
 vet-default:
