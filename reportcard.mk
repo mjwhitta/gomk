@@ -1,7 +1,7 @@
 SRC := $(call uniq,$(dir $(call find,.,*.go)))
 
 cyclo-default:
-	@gocyclo -over 15 $(SRC)
+	@gocyclo --over 15 $(SRC)
 
 ineffassign-default:
 	@ineffassign ./...
@@ -36,8 +36,8 @@ reportcard-default: fmt cyclo ineffassign license lint readme simplify vet;
 simplify-default:
 	@gofmt $(LDFLAGS) $(SRC)
 
-ifneq ($(unameS),Windows)
 spellcheck-default:
+ifneq ($(unameS),Windows)
 	@codespell --check-filenames --skip ".git,*.pem"
 endif
 

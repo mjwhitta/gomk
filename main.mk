@@ -28,7 +28,7 @@ TRIM := --trimpath
 ifeq ($(unameS),Windows)
     VERS := $(subst ",,$(lastword $(shell findstr /R "const +Version" *.go)))
 else
-    VERS := $(subst ",,$(lastword $(shell grep -Es "const +Version" *.go)))
+    VERS := $(subst ",,$(lastword $(shell grep -E -s "const +Version" *.go)))
 endif
 
 ifneq ($(GARBLE),)
@@ -59,7 +59,7 @@ ifneq ($(wildcard cover.out),)
 	@powershell -c Remove-Item -Force cover.out
 endif
 else
-	@rm -fr "$(BUILD)" cover.out
+	@rm -f -r "$(BUILD)" cover.out
 endif
 ifneq ($(wildcard go.mod),)
 	@go mod tidy
