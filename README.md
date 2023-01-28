@@ -1,5 +1,7 @@
 # gomk
 
+[![Yum](https://img.shields.io/badge/-Buy%20me%20a%20cookie-blue?style=for-the-badge&logo=cookiecutter)](https://www.buymeacoffee.com/mjwhitta)
+
 ## What is this?
 
 A "simple" `Makefile` solution for Go projects. It attempts to
