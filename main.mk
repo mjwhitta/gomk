@@ -1,8 +1,8 @@
 # Determine OS
 ifeq ($(OS),Windows_NT)
-	unameS := Windows
+    unameS := Windows
 else
-	unameS := $(shell uname -s)
+    unameS := $(shell uname -s)
 endif
 
 # Helper variables
@@ -19,7 +19,11 @@ BUILD := build
 CC := go
 GOARCH := $(shell go env GOARCH)
 GOOS := $(shell go env GOOS)
-GOPATH := $(firstword $(subst :, ,$(shell go env GOPATH)))
+ifeq ($(unameS),Windows)
+    GOPATH := $(shell go env GOPATH)
+else
+    GOPATH := $(firstword $(subst :, ,$(shell go env GOPATH)))
+endif
 LDFLAGS := -s -w
 OUT := $(BUILD)/$(GOOS)/$(GOARCH)
 PKG := $(shell go list -m)
@@ -32,8 +36,8 @@ else
 endif
 
 ifneq ($(GARBLE),)
-	CC := garble
-	TRIM :=
+    CC := garble
+    TRIM :=
 endif
 
 all: build;
