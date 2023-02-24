@@ -27,7 +27,9 @@ endif
 LDFLAGS := -s -w
 OUT := $(BUILD)/$(GOOS)/$(GOARCH)
 PKG := $(shell go list -m)
-SRCDEPS := $(patsubst v%,,$(shell go list -m all))
+ifeq ($(wildcard vendor),)
+    SRCDEPS := $(patsubst v%,,$(shell go list -m all))
+endif
 TRIM := --trimpath
 ifeq ($(unameS),Windows)
     VERS := $(subst ",,$(lastword $(shell findstr /R "const +Version" *.go)))
@@ -65,8 +67,10 @@ endif
 else
 	@rm -f -r "$(BUILD)" cover.out
 endif
+ifeq ($(wildcard vendor),)
 ifneq ($(wildcard go.mod),)
 	@go mod tidy
+endif
 endif
 
 clena-default: clean;
@@ -123,8 +127,10 @@ test-default: fmt
 
 updatedeps-default:
 	$(foreach d,$(SRCDEPS),$(shell go get --ldflags="$(LDFLAGS)" --trimpath -u -v $d))
+ifeq ($(wildcard vendor),)
 ifneq ($(wildcard go.mod),)
 	@go mod tidy
+endif
 endif
 
 visualcover-default: cover
