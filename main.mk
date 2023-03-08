@@ -27,10 +27,8 @@ endif
 LDFLAGS := -s -w
 OUT := $(BUILD)/$(GOOS)/$(GOARCH)
 PKG := $(shell go list -m)
-ifeq ($(wildcard vendor),)
-    SRCDEPS := $(patsubst v%,,$(shell go list -m all))
-endif
 TRIM := --trimpath
+VCS := --buildvcs=false
 ifeq ($(unameS),Windows)
     VERS := $(subst ",,$(lastword $(shell findstr /R "const +Version" *.go)))
 else
@@ -126,7 +124,7 @@ test-default: fmt
 	@go test ./...
 
 updatedeps-default:
-	$(foreach d,$(SRCDEPS),$(shell go get --ldflags="$(LDFLAGS)" --trimpath -u -v $d))
+	@go get $(VCS) --ldflags="$(LDFLAGS)" $(TRIM) -u -v all
 ifeq ($(wildcard vendor),)
 ifneq ($(wildcard go.mod),)
 	@go mod tidy

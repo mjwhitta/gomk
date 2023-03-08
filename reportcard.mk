@@ -7,11 +7,11 @@ ineffassign-default:
 	@ineffassign ./...
 
 installreportcard-default:
-	@go install --ldflags="$(LDFLAGS)" --trimpath \
+	@go install --buildvcs=false --ldflags="-s -w" --trimpath \
 	    github.com/fzipp/gocyclo/cmd/gocyclo@latest
-	@go install --ldflags="$(LDFLAGS)" --trimpath \
+	@go install --buildvcs=false --ldflags="-s -w" --trimpath \
 	    github.com/gordonklaus/ineffassign@latest
-	@go install --ldflags="$(LDFLAGS)" --trimpath \
+	@go install --buildvcs=false --ldflags="-s -w" --trimpath \
 	    golang.org/x/lint/golint@latest
 ifneq ($(wildcard go.mod),)
 	@go mod tidy
@@ -34,7 +34,7 @@ endif
 reportcard-default: fmt cyclo ineffassign license lint readme simplify vet;
 
 simplify-default:
-	@gofmt $(LDFLAGS) $(SRC)
+	@gofmt -s -w $(SRC)
 
 spellcheck-default:
 ifneq ($(unameS),Windows)

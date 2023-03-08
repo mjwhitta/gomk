@@ -1,5 +1,5 @@
 installsloc-default:
-	@go install --ldflags="$(LDFLAGS)" --trimpath \
+	@go install --buildvcs=false --ldflags="-s -w" --trimpath \
 	    github.com/bytbox/sloc/sloc@latest
 ifneq ($(wildcard go.mod),)
 	@go mod tidy
