@@ -36,8 +36,8 @@ reportcard-default: fmt cyclo ineffassign license lint readme simplify vet;
 simplify-default:
 	@gofmt -s -w $(SRC)
 
+ifneq ($(unameS),windows)
 spellcheck-default:
-ifneq ($(unameS),Windows)
 	@codespell --check-filenames --skip ".git,*.pem"
 endif
 

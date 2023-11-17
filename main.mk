@@ -1,8 +1,13 @@
+# Utility functions
+find=$(foreach d,$(wildcard $(1:=/*)),$(call find,$d,$2) $(filter $(subst *,%,$2),$d))
+lower = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(subst G,g,$(subst H,h,$(subst I,i,$(subst J,j,$(subst K,k,$(subst L,l,$(subst M,m,$(subst N,n,$(subst O,o,$(subst P,p,$(subst Q,q,$(subst R,r,$(subst S,s,$(subst T,t,$(subst U,u,$(subst V,v,$(subst W,w,$(subst X,x,$(subst Y,y,$(subst Z,z,$1))))))))))))))))))))))))))
+uniq=$(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
+
 # Determine OS
 ifeq ($(OS),Windows_NT)
-    unameS := Windows
+    unameS := windows
 else
-    unameS := $(shell uname -s)
+    unameS := $(call lower,$(shell uname -s))
 endif
 
 # Helper variables
@@ -10,16 +15,12 @@ comma := ,
 null :=
 space := $(null) $(null)
 
-# Utility functions
-find=$(foreach d,$(wildcard $(1:=/*)),$(call find,$d,$2) $(filter $(subst *,%,$2),$d))
-uniq=$(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
-
 # Set some variables
 BUILD := build
 CC := go
 GOARCH := $(shell go env GOARCH)
 GOOS := $(shell go env GOOS)
-ifeq ($(unameS),Windows)
+ifeq ($(unameS),windows)
     GOPATH := $(shell go env GOPATH)
 else
     GOPATH := $(firstword $(subst :, ,$(shell go env GOPATH)))
@@ -29,7 +30,7 @@ OUT := $(BUILD)/$(GOOS)/$(GOARCH)
 PKG := $(shell go list -m)
 TRIM := --trimpath
 VCS := --buildvcs=false
-ifeq ($(unameS),Windows)
+ifeq ($(unameS),windows)
     VERS := $(subst ",,$(lastword $(shell findstr /R "const +Version" *.go)))
 else
     VERS := $(subst ",,$(lastword $(shell grep -E -s "const +Version" *.go)))
@@ -55,7 +56,7 @@ include gomk/sloc.mk
 include gomk/vscode.mk
 
 clean-default: fmt
-ifeq ($(unameS),Windows)
+ifeq ($(unameS),windows)
 ifneq ($(wildcard $(BUILD)),)
 	@powershell -c Remove-Item -Force -Recurse "$(BUILD)"
 endif
@@ -79,7 +80,7 @@ cover-default: fmt
 	@go tool cover --func=cover.out
 
 dir-default:
-ifeq ($(unameS),Windows)
+ifeq ($(unameS),windows)
 ifeq ($(wildcard $(OUT)),)
 	@powershell -c "New-Item -ItemType Directory \"$(OUT)\" | Out-Null"
 endif
@@ -94,7 +95,7 @@ gen-default:
 	@go generate ./...
 
 gitlab-cover-default: clean
-ifneq ($(unameS),Windows)
+ifneq ($(unameS),windows)
 	@useradd -m user
 	@chown -R user:user .
 	@go clean --testcache
