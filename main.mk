@@ -5,6 +5,8 @@ uniq=$(if $1,$(firstword $1) $(call uniq,$(filter-out $(firstword $1),$1)))
 
 # Determine OS
 ifeq ($(OS),Windows_NT)
+    SHELL := powershell.exe
+    .SHELLFLAGS := -c
     unameS := windows
 else
     unameS := $(call lower,$(shell uname -s))
@@ -58,10 +60,10 @@ include gomk/vscode.mk
 clean-default: fmt
 ifeq ($(unameS),windows)
 ifneq ($(wildcard $(BUILD)),)
-	@powershell -c Remove-Item -Force -Recurse "$(BUILD)"
+	@remove-item -force -recurse "$(BUILD)"
 endif
 ifneq ($(wildcard cover.out),)
-	@powershell -c Remove-Item -Force cover.out
+	@remove-item -force cover.out
 endif
 else
 	@rm -f -r "$(BUILD)" cover.out
@@ -82,7 +84,7 @@ cover-default: fmt
 dir-default:
 ifeq ($(unameS),windows)
 ifeq ($(wildcard $(OUT)),)
-	@powershell -c "New-Item -ItemType Directory \"$(OUT)\" | Out-Null"
+	@new-item -itemtype directory "$(OUT)" | Out-Null
 endif
 else
 	@mkdir -p "$(OUT)"
