@@ -40,15 +40,14 @@ project. Below are some examples:
 
 ```
 # Override the build-default recipe
-build: reportcard dir
-    @go build -o "$(OUT)" ./cmd/justonething
+build: justonething;
 
 # Override the debug-default recipe with an empty recipe
-debug: reportcard dir;
+debug: fmt;
 
 # Add new recipes specific to your project
-superclean: clean
-	@echo Clean up all the stuff
+justonething: dir fmt
+    @go build -o "$(OUT)" ./cmd/justonething
 ```
 
 ## Links
