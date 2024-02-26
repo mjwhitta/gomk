@@ -1,0 +1,40 @@
+FROM ubuntu:20.04
+
+# Use bash b/c it's better
+SHELL ["/bin/bash", "-c"]
+
+# Add entry script
+ADD gomk/docker/root/dockerentry /
+RUN chmod 755 /dockerentry
+
+# 1. Install dependencies
+# 2. Setup container
+# 3. Clean up unnecessary files and packages
+RUN set -o pipefail && \
+    ( \
+        apt-get -q -y update && \
+        apt-get -q -y upgrade && \
+        apt-get -q -y install \
+            make \
+            sudo \
+    ) && ( \
+        mkdir -p /home/user/{.cache,.go/bin} && \
+        ( \
+            echo "export GOPATH=/home/user/.go"; \
+            echo "export GOROOT=/go"; \
+            echo "export PATH=\$GOPATH/bin:\$GOROOT/bin:\$PATH"; \
+            echo "alias la=\"\ls -A --color=auto -F\""; \
+            echo "alias ll=\"\ls --color=auto -F -h -l\""; \
+            echo "alias lla=\"\ls -A --color=auto -F -h -l\""; \
+            echo "alias ls=\"\ls --color=auto -F\""; \
+            echo "alias q=\"exit\""; \
+        ) >/home/user/.bashrc \
+    ) && ( \
+        apt-get -q -y autoremove && \
+        apt-get -q -y clean && \
+        rm -f -r /var/{cache/apt,tmp}/* \
+    )
+
+# Set entrypoint
+ENTRYPOINT ["/dockerentry"]
+WORKDIR /pwd

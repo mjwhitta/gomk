@@ -52,6 +52,7 @@ ifeq ($(wildcard cmd/*),)
 else
     include gomk/cmd.mk
 endif
+include gomk/docker.mk
 include gomk/garble.mk
 include gomk/reportcard.mk
 include gomk/sloc.mk
