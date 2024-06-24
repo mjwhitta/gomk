@@ -56,6 +56,7 @@ include gomk/docker.mk
 include gomk/garble.mk
 include gomk/reportcard.mk
 include gomk/sloc.mk
+include gomk/versioninfo.mk
 include gomk/vscode.mk
 
 clean-default: fmt
