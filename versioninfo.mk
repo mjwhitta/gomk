@@ -1,6 +1,5 @@
 installversioninfo-default:
-	@go install --buildvcs=false --ldflags="-s -w" --trimpath \
-	    github.com/josephspurrier/goversioninfo/cmd/goversioninfo@latest
+	@go install --buildvcs=false --ldflags="-s -w" --trimpath github.com/josephspurrier/goversioninfo/cmd/goversioninfo@latest
 ifneq ($(wildcard go.mod),)
 	@go mod tidy
 endif
