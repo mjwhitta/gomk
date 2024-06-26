@@ -50,6 +50,17 @@ justonething: dir fmt
     @go build -o "$(OUT)" ./cmd/justonething
 ```
 
+### Special cases
+
+There are three special targets which set some environment variables,
+then run the `build` target.
+
+Target      | Description
+---         | ---
+`cgo`       | Compiles with `cgo` support
+`cgogarble` | Compiles with `cgo` support using `garble` compiler
+`garble`    | Compiles with `garble` compiler
+
 ## Links
 
 - [Source](https://github.com/mjwhitta/gomk)

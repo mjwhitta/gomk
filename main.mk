@@ -19,7 +19,9 @@ space := $(null) $(null)
 
 # Set some variables
 BUILD := build
-CC := go
+CC := $(shell go env CC)
+CGO_ENABLED := $(shell go env CGO_ENABLED)
+GO := go
 GOARCH := $(shell go env GOARCH)
 GOOS := $(shell go env GOOS)
 ifeq ($(unameS),windows)
@@ -38,11 +40,6 @@ else
     VERS := $(subst ",,$(lastword $(shell grep -E -s "const +Version" *.go)))
 endif
 
-ifneq ($(GARBLE),)
-    CC := garble
-    TRIM :=
-endif
-
 all: build;
 
 %: %-default;
@@ -58,6 +55,16 @@ include gomk/reportcard.mk
 include gomk/sloc.mk
 include gomk/versioninfo.mk
 include gomk/vscode.mk
+
+cgo-default: CC := x86_64-w64-mingw32-gcc
+cgo-default: CGO_ENABLED := 1
+cgo-default: build;
+
+cgogarble-default: CC := x86_64-w64-mingw32-gcc
+cgogarble-default: CGO_ENABLED := 1
+cgogarble-default: GO := garble
+cgogarble-default: TRIM :=
+cgogarble-default: build;
 
 clean-default: fmt
 ifeq ($(unameS),windows)
@@ -94,6 +101,10 @@ endif
 
 fmt-default:
 	@go fmt ./...
+
+garble-default: GO := garble
+garble-default: TRIM :=
+garble-default: build;
 
 gen-default:
 	@go generate ./...
