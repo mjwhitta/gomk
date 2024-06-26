@@ -56,11 +56,15 @@ include gomk/sloc.mk
 include gomk/versioninfo.mk
 include gomk/vscode.mk
 
+ifeq ($(GOOS),windows)
 cgo-default: CC := x86_64-w64-mingw32-gcc
+endif
 cgo-default: CGO_ENABLED := 1
 cgo-default: build;
 
+ifeq ($(GOOS),windows)
 cgogarble-default: CC := x86_64-w64-mingw32-gcc
+endif
 cgogarble-default: CGO_ENABLED := 1
 cgogarble-default: GO := garble
 cgogarble-default: TRIM :=
