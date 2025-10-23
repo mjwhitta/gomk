@@ -2,6 +2,7 @@ golangci-default:
 ifeq ($(wildcard .golangci.yml),)
 	@cp gomk/golangci.yml .golangci.yml
 endif
+	@echo "Linting GOOS=$(GOOS)"
 	@golangci-lint fmt
 	@golangci-lint run
 
