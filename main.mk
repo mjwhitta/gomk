@@ -51,6 +51,7 @@ else
 endif
 include gomk/docker.mk
 include gomk/garble.mk
+include gomk/golangci.mk
 include gomk/reportcard.mk
 include gomk/sloc.mk
 include gomk/versioninfo.mk
@@ -122,10 +123,10 @@ ifneq ($(unameS),windows)
 	@go tool cover --func=cover.out
 endif
 
-mr-default: fmt
-	@make GOOS=darwin reportcard spellcheck vslint
-	@make GOOS=linux reportcard spellcheck vslint
-	@make GOOS=windows reportcard spellcheck vslint
+mr-default:
+	@make GOOS=darwin golangci
+	@make GOOS=linux golangci
+	@make GOOS=windows golangci
 	@make test
 
 pr-default: mr;
