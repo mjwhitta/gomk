@@ -1,7 +1,7 @@
 installvscode-default:
 	@go install --buildvcs=false --ldflags="-s -w" --trimpath github.com/go-delve/delve/cmd/dlv@latest
 ifeq ($(unameS),windows)
-	@copy-item -force $(GOPATH)/bin/dlv $(GOPATH)/bin/dlv-dap
+	@powershell -c copy-item -force $(GOPATH)/bin/dlv $(GOPATH)/bin/dlv-dap
 else
 	@cp -f $(GOPATH)/bin/dlv $(GOPATH)/bin/dlv-dap
 endif

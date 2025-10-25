@@ -10,11 +10,7 @@ libc_2.39: phony_dummy
 	@docker rmi libc:delete &>/dev/null || true
 	@docker rmi ubuntu:20.04 &>/dev/null || true
 	@docker run $(DKR) -i --rm -t -v "$(shell go env GOROOT)":/go:ro -v "$(shell pwd)":/pwd:Z -w /pwd libc:2.39
-ifeq ($(unameS),windows)
-	@remove-item -force -recurse vendor
-else
 	@rm -f -r vendor
-endif
 
 libc_2.38: phony_dummy
 	@go mod vendor
@@ -24,11 +20,7 @@ libc_2.38: phony_dummy
 	@docker rmi libc:delete &>/dev/null || true
 	@docker rmi ubuntu:20.04 &>/dev/null || true
 	@docker run $(DKR) -i --rm -t -v "$(shell go env GOROOT)":/go:ro -v "$(shell pwd)":/pwd:Z -w /pwd libc:2.38
-ifeq ($(unameS),windows)
-	@remove-item -force -recurse vendor
-else
 	@rm -f -r vendor
-endif
 
 libc_2.35: phony_dummy
 	@go mod vendor
@@ -38,11 +30,7 @@ libc_2.35: phony_dummy
 	@docker rmi libc:delete &>/dev/null || true
 	@docker rmi ubuntu:20.04 &>/dev/null || true
 	@docker run $(DKR) -i --rm -t -v "$(shell go env GOROOT)":/go:ro -v "$(shell pwd)":/pwd:Z -w /pwd libc:2.35
-ifeq ($(unameS),windows)
-	@remove-item -force -recurse vendor
-else
 	@rm -f -r vendor
-endif
 
 libc_2.31: phony_dummy
 	@go mod vendor
@@ -52,11 +40,7 @@ libc_2.31: phony_dummy
 	@docker rmi libc:delete &>/dev/null || true
 	@docker rmi ubuntu:20.04 &>/dev/null || true
 	@docker run $(DKR) -i --rm -t -v "$(shell go env GOROOT)":/go:ro -v "$(shell pwd)":/pwd:Z -w /pwd libc:2.31
-ifeq ($(unameS),windows)
-	@remove-item -force -recurse vendor
-else
 	@rm -f -r vendor
-endif
 
 .PHONY: phony_dummy
 phony_dummy: ;

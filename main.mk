@@ -74,10 +74,10 @@ cgogarble-default: build;
 clean-default: fmt
 ifeq ($(unameS),windows)
 ifneq ($(wildcard $(BUILD)),)
-	@remove-item -force -recurse "$(BUILD)"
+	@powershell -c remove-item -force -recurse "$(BUILD)"
 endif
 ifneq ($(wildcard cover.out),)
-	@remove-item -force cover.out
+	@powershell -c remove-item -force cover.out
 endif
 else
 	@rm -f -r "$(BUILD)" cover.out
@@ -98,7 +98,7 @@ cover-default: fmt
 dir-default:
 ifeq ($(unameS),windows)
 ifeq ($(wildcard $(OUT)),)
-	@new-item -itemtype directory "$(OUT)" | Out-Null
+	@powershell -c new-item -itemtype directory "$(OUT)" | out-null
 endif
 else
 	@mkdir -p "$(OUT)"
@@ -123,11 +123,7 @@ ifneq ($(unameS),windows)
 	@go tool cover --func=cover.out
 endif
 
-mr-default:
-	@make GOOS=darwin golangci
-	@make GOOS=linux golangci
-	@make GOOS=windows golangci
-	@make test
+mr-default: golangci test;
 
 pr-default: mr;
 
