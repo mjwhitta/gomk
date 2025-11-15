@@ -4,11 +4,11 @@ define GOLANGCI-LINT
 endef
 
 golangci-fmt-default:
-ifeq ($(wildcard .golangci.yml),)
+ifeq ($(wildcard .golangci.yaml),)
 ifeq ($(unameS),windows)
-	@powershell -c copy-item gomk/golangci.yml .golangci.yml
+	@powershell -c copy-item gomk/golangci.yaml .golangci.yaml
 else
-	@cp gomk/golangci.yml .golangci.yml
+	@cp gomk/golangci.yaml .golangci.yaml
 endif
 endif
 	@golangci-lint fmt
