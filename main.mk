@@ -123,7 +123,7 @@ ifneq ($(unameS),windows)
 	@go tool cover --func=cover.out
 endif
 
-mr-default: golangci test;
+mr-default: golangci spellcheck test;
 
 pr-default: mr;
 

@@ -37,9 +37,9 @@ reportcard-default: fmt cyclo ineffassign license lint readme simplify vet missp
 simplify-default:
 	@gofmt -l -s -w .
 
-ifneq ($(unameS),windows)
 spellcheck-default:
-	@codespell --check-filenames --skip ".git,.golangci.yaml,gomk,*.pem"
+ifneq ($(unameS),windows)
+	@codespell --check-filenames --skip ".git,gomk,*.pem"
 endif
 
 vet-default:
