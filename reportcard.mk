@@ -39,7 +39,7 @@ simplify-default:
 
 spellcheck-default:
 ifneq ($(unameS),windows)
-	@codespell --check-filenames --skip ".git,gomk,*.pem"
+	@codespell -f -L hilighter -S "*.pem,.git,go.*,gomk"
 endif
 
 vet-default:
