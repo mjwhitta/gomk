@@ -32,6 +32,7 @@ endif
 LDFLAGS := -s -w
 OUT := $(BUILD)/$(GOOS)/$(GOARCH)
 PKG := $(shell go list -m)
+PKGS := $(filter-out ./cmd/%,$(subst $(PKG),.,$(shell go list ./...)))
 TRIM := --trimpath
 VCS := --buildvcs=false
 ifeq ($(unameS),windows)
@@ -92,7 +93,7 @@ clena-default: clean;
 
 cover-default: fmt
 	@go clean --testcache
-	@go test --coverprofile=cover.out ./...
+	@go test --coverprofile=cover.out $(PKGS)
 	@go tool cover --func=cover.out
 
 dir-default:
@@ -119,7 +120,7 @@ ifneq ($(unameS),windows)
 	@useradd -m user
 	@chown -R user:user .
 	@go clean --testcache
-	@su -c "go test --coverprofile=cover.out ./..." user
+	@su -c "go test --coverprofile=cover.out $(PKGS)" user
 	@go tool cover --func=cover.out
 endif
 
@@ -138,7 +139,7 @@ superclena-default: superclean;
 
 test-default: fmt
 	@go clean --testcache
-	@go test ./...
+	@go test $(PKGS)
 
 updatedeps-default:
 	@go get $(VCS) --ldflags="$(LDFLAGS)" $(TRIM) -u -v all
